@@ -2,103 +2,704 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="refresh" content="300">
-<title>Signals · 12:47 AM</title>
+<title>Trading Signals · 12:57 AM</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;font-weight:400;background:#F2F0EA;color:#2C2C2A;padding:0 0 36px;max-width:430px;margin:0 auto;-webkit-font-smoothing:antialiased}
-.card{background:white;border-radius:16px;border:0.5px solid #E8E5DC;padding:16px;margin:0 12px 12px}
-.lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#B4B2A9;margin-bottom:8px}
+body{font-family:'DM Sans',sans-serif;font-weight:400;background:#F2F0EA;color:#2C2C2A;-webkit-font-smoothing:antialiased}
+.card{background:white;border-radius:16px;border:0.5px solid #E8E5DC;padding:18px}
+.lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#B4B2A9;margin-bottom:10px}
 table{width:100%;border-collapse:collapse}
-th{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;color:#B4B2A9;padding:6px 4px;border-bottom:1px solid #EEECE8;text-align:left;font-weight:500}
+th{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;color:#B4B2A9;padding:7px 6px;border-bottom:1px solid #EEECE8;text-align:left;font-weight:500;white-space:nowrap}
 tr:last-child td{border-bottom:none!important}
+tr:hover td{background:rgba(0,0,0,0.012)}
+.ai-card{border-left:3px solid #2C2C2A;border-radius:0 16px 16px 0;background:white;border-top:0.5px solid #E8E5DC;border-right:0.5px solid #E8E5DC;border-bottom:0.5px solid #E8E5DC;padding:18px}
+.disclaimer{background:#FAEEDA;border:0.5px solid #FAC775;border-radius:12px;padding:12px 16px}
+.disclaimer p{font-size:12px;color:#854F0B;line-height:1.55}
+.legend{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.legend span{font-size:10px;padding:3px 8px;border-radius:4px;font-weight:700}
+
+/* ── TOP BAR ── */
+.topbar{background:#1E1E1C;padding:18px 24px}
+.topbar-inner{max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.clock{font-size:30px;font-weight:700;color:#FFF;line-height:1}
+.dateline{font-size:13px;color:#C8C5BF;margin-top:4px}
+.eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:#A8A5A0;text-transform:uppercase;margin-bottom:5px}
+.meta{font-size:11px;color:#666460;font-family:'DM Mono',monospace;margin-top:10px}
+.session-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:#E1F5EE}
+.session-pill .dot{width:7px;height:7px;border-radius:50%;background:#1D9E75}
+.session-pill span{font-size:12px;font-weight:600;color:#085041}
+.st{font-size:11px;color:#C8C5BF;font-family:'DM Mono',monospace;margin-top:5px;text-align:right}
+
+/* ── NAV BAR ── */
+.navbar{background:#2A2A28;border-bottom:1px solid #333;padding:0 24px}
+.navbar-inner{max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.bot-tabs{display:flex}
+.bot-tab{font-size:13px;padding:14px 20px;border:none;background:transparent;color:#888780;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;border-bottom:2px solid transparent;transition:all 0.15s}
+.bot-tab.active{color:#F2F0EA;border-bottom-color:#7DDBA8}
+.bot-tab:hover{color:#F2F0EA}
+.right-controls{display:flex;align-items:center;gap:10px;padding:10px 0}
+.session-tabs{display:flex;gap:5px}
+.s-tab{font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid #444;cursor:pointer;background:transparent;color:#888780;font-family:'DM Sans',sans-serif;font-weight:500;transition:all 0.15s}
+.s-tab.active{border-color:#7DDBA8;color:#7DDBA8;background:rgba(125,219,168,0.08)}
+.s-tab:hover{color:#F2F0EA;border-color:#666}
+.mode-toggle{display:flex;border:1px solid #444;border-radius:7px;overflow:hidden}
+.mode-btn{font-size:12px;padding:5px 14px;border:none;cursor:pointer;background:transparent;color:#888780;font-family:'DM Sans',sans-serif;font-weight:500;transition:all 0.15s}
+.mode-btn.active{background:#3A3A38;color:#F2F0EA}
+
+/* ── MAIN ── */
+.main{max-width:1240px;margin:0 auto;padding:20px 24px 48px}
+.desk-grid{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start}
+.left-col,.right-col{display:flex;flex-direction:column;gap:16px}
+.page{display:none}.page.active{display:block}
+
+/* ── TRAFFIC LIGHT ── */
+.tl-card{background:#FCEBEB;border:0.5px solid #F7C1C1;border-radius:16px;padding:18px}
+.tl-inner{display:flex;align-items:center;gap:16px}
+.tl-bulbs{display:flex;flex-direction:column;align-items:center;padding:10px 8px;background:rgba(0,0,0,0.07);border-radius:28px;flex-shrink:0}
+.tl-verdict{font-size:20px;font-weight:700;color:#791F1F;line-height:1.1;margin-bottom:6px}
+.tl-msg{font-size:13px;color:#A32D2D;line-height:1.5}
+.tl-learn{font-size:12px;color:#A32D2D;opacity:0.8;margin-top:6px;line-height:1.5;padding-top:6px;border-top:0.5px solid rgba(0,0,0,0.08)}
+
+/* ── LT SPECIFIC ── */
+.lt-header{background:#1E1E1C;border-radius:16px;padding:18px;color:white;margin-bottom:0}
+.lt-title{font-size:18px;font-weight:700;color:white;margin-bottom:4px}
+.lt-sub{font-size:12px;color:#888780;line-height:1.5}
+.sector-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;background:#333;color:#C8C5BF;font-family:'DM Mono',monospace;margin-top:2px}
+
+/* ── HIDE/SHOW ── */
+body.pro .lo{display:none!important}
+body.pro .tl-learn{display:none!important}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .desk-grid{grid-template-columns:1fr}
+  .topbar,.navbar{padding:12px 16px}
+  .main{padding:14px 12px 40px}
+  .card,.ai-card,.tl-card,.lt-header{padding:14px}
+  .tl-verdict{font-size:17px}
+  .clock{font-size:24px!important}
+  .bot-tab{font-size:12px;padding:12px 14px}
+  .s-tab{font-size:10px;padding:4px 9px}
+  .mode-btn{font-size:11px;padding:5px 10px}
+  .session-tabs{gap:3px}
+}
 </style>
 </head>
 <body>
 
-<div style="background:#2C2C2A;padding:18px 16px 16px;margin-bottom:12px">
-  <div style="display:flex;align-items:flex-start;justify-content:space-between">
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-inner">
     <div>
-      <div style="font-size:10px;font-family:'DM Mono',monospace;letter-spacing:2px;color:#666460;text-transform:uppercase;margin-bottom:6px">Day trading signals</div>
-      <div style="font-size:26px;font-weight:700;color:white;line-height:1">12:47 AM</div>
-      <div style="font-size:12px;color:#666460;margin-top:4px">Mon 04 May 2026 · Perth AWST</div>
+      <div class="eyebrow">Trading signals</div>
+      <div class="clock">12:57 AM</div>
+      <div class="dateline">Mon 04 May 2026 · Perth AWST</div>
+      <div class="meta">61 of 124 stocks in range · refreshes every 5 min</div>
     </div>
-    <div style="text-align:right">
-      <div style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:#E1F5EE">
-        <div style="width:6px;height:6px;border-radius:50%;background:#1D9E75"></div>
-        <span style="font-size:11px;font-weight:600;color:#085041">Regular hours</span>
+    <div>
+      <div class="session-pill"><div class="dot"></div><span id="pill-name">Regular hours</span></div>
+      <div class="st" id="pill-time">9:30 PM–4:00 AM AWST</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV BAR -->
+<div class="navbar">
+  <div class="navbar-inner">
+    <div class="bot-tabs">
+      <button class="bot-tab active" onclick="showPage('day',this)">Day trading</button>
+      <button class="bot-tab" onclick="showPage('lt',this)">Long-term portfolio</button>
+    </div>
+    <div class="right-controls">
+      <div class="session-tabs" id="session-tabs-wrap">
+        <button class="s-tab " onclick="setSession(0,this)">Pre-market</button>
+        <button class="s-tab active" onclick="setSession(1,this)">Regular</button>
+        <button class="s-tab " onclick="setSession(2,this)">Post-market</button>
       </div>
-      <div style="font-size:10px;color:#666460;margin-top:4px;font-family:'DM Mono',monospace">9:30 PM–4:00 AM AWST</div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btn-learn" onclick="setMode('learn')">Learn</button>
+        <button class="mode-btn" id="btn-pro" onclick="setMode('pro')">Pro</button>
+      </div>
     </div>
   </div>
-  <div style="margin-top:12px;font-size:10px;color:#555350;font-family:'DM Mono',monospace">
-    18 stocks scanned · auto-refreshes every 5 min
-  </div>
 </div>
 
-<div class="card" style="background:#FAEEDA;border-color:#FAC775">
-  <div style="display:flex;align-items:center;gap:14px">
-    <div style="display:flex;flex-direction:column;align-items:center;padding:8px 7px;background:rgba(0,0,0,0.06);border-radius:24px;flex-shrink:0">
-      <div style="width:22px;height:22px;border-radius:50%;background:#E24B4A;opacity:0.12;margin:5px 0;"></div><div style="width:22px;height:22px;border-radius:50%;background:#EF9F27;opacity:1;margin:5px 0;box-shadow:0 0 8px #EF9F27;"></div><div style="width:22px;height:22px;border-radius:50%;background:#97C459;opacity:0.12;margin:5px 0;"></div>
+<div class="main">
+
+<!-- ══════════ DAY TRADING PAGE ══════════ -->
+<div class="page active" id="page-day">
+<div class="desk-grid">
+  <div class="left-col">
+
+    <div class="tl-card">
+      <div class="tl-inner">
+        <div class="tl-bulbs"><div style="width:22px;height:22px;border-radius:50%;background:#E24B4A;opacity:1;margin:5px 0;box-shadow:0 0 12px #E24B4A;"></div><div style="width:22px;height:22px;border-radius:50%;background:#EF9F27;opacity:0.12;margin:5px 0;"></div><div style="width:22px;height:22px;border-radius:50%;background:#97C459;opacity:0.12;margin:5px 0;"></div></div>
+        <div>
+          <div class="tl-verdict">Red — stay out today</div>
+          <div class="tl-msg">14 of 61 stocks falling. Stay out and protect your capital today.</div>
+          <div class="tl-learn">The traffic light combines volatility, momentum, volume and news into one clear answer. Green = good to scan movers. Amber = smaller positions only. Red = protect your money and sit it out.</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px"><div class="factor-card" style="background:#F7F5EF;border-radius:10px;padding:10px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><div style="width:10px;height:10px;border-radius:50%;background:#97C459"></div><div style="font-size:13px;font-weight:600;color:#2C2C2A">Volatility</div></div><div style="font-size:12px;color:#5F5E5A;font-weight:500">60% up</div><div class="lo" style="font-size:11px;color:#888780;margin-top:3px;line-height:1.4">How much stocks are moving. Green = lots of activity = more opportunities.</div></div><div class="factor-card" style="background:#F7F5EF;border-radius:10px;padding:10px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><div style="width:10px;height:10px;border-radius:50%;background:#97C459"></div><div style="font-size:13px;font-weight:600;color:#2C2C2A">Momentum</div></div><div style="font-size:12px;color:#5F5E5A;font-weight:500">Upward</div><div class="lo" style="font-size:11px;color:#888780;margin-top:3px;line-height:1.4">Which direction most stocks are heading right now.</div></div><div class="factor-card" style="background:#F7F5EF;border-radius:10px;padding:10px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><div style="width:10px;height:10px;border-radius:50%;background:#97C459"></div><div style="font-size:13px;font-weight:600;color:#2C2C2A">Volume</div></div><div style="font-size:12px;color:#5F5E5A;font-weight:500">Active</div><div class="lo" style="font-size:11px;color:#888780;margin-top:3px;line-height:1.4">How many shares being traded. High = moves are more trustworthy.</div></div><div class="factor-card" style="background:#F7F5EF;border-radius:10px;padding:10px"><div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><div style="width:10px;height:10px;border-radius:50%;background:#97C459"></div><div style="font-size:13px;font-weight:600;color:#2C2C2A">News</div></div><div style="font-size:12px;color:#5F5E5A;font-weight:500">Bullish</div><div class="lo" style="font-size:11px;color:#888780;margin-top:3px;line-height:1.4">Whether today's headlines are positive or negative for these stocks.</div></div></div>
     </div>
-    <div style="flex:1">
-      <div style="font-size:20px;font-weight:700;color:#633806;line-height:1.1">Trade carefully</div>
-      <div style="font-size:12px;color:#854F0B;margin-top:5px;line-height:1.5">Mixed — 8 up, 6 down, 4 flat. Be selective and use smaller position sizes.</div>
+
+    <div class="card">
+      <div class="lbl">Session guide — Perth times</div>
+      <div id="si-0" style="display:flex;gap:10px;padding:9px 0;border-bottom:0.5px solid #F1EFE8">
+        <div style="width:8px;height:8px;border-radius:50%;background:#534AB7;margin-top:5px;flex-shrink:0"></div>
+        <div><div style="font-size:13px;font-weight:600;color:#3C3489">Pre-market · 4:00–9:30 PM</div>
+        <div class="lo" style="font-size:11px;color:#888780;margin-top:2px;line-height:1.4">Before the market officially opens. Biggest early moves happen here. Your favourite session.</div></div>
+      </div>
+      <div id="si-1" style="display:flex;gap:10px;padding:9px 0;border-bottom:0.5px solid #F1EFE8">
+        <div style="width:8px;height:8px;border-radius:50%;background:#1D9E75;margin-top:5px;flex-shrink:0"></div>
+        <div><div style="font-size:13px;font-weight:600;color:#085041">Regular hours · 9:30 PM–4:00 AM</div>
+        <div class="lo" style="font-size:11px;color:#888780;margin-top:2px;line-height:1.4">Main market hours. Highest volume and tightest spreads. Signals are most reliable here.</div></div>
+      </div>
+      <div id="si-2" style="display:flex;gap:10px;padding:9px 0">
+        <div style="width:8px;height:8px;border-radius:50%;background:#BA7517;margin-top:5px;flex-shrink:0"></div>
+        <div><div style="font-size:13px;font-weight:600;color:#633806">Post-market · 4:00–8:00 AM</div>
+        <div class="lo" style="font-size:11px;color:#888780;margin-top:2px;line-height:1.4">After close. Lower volume, wider spreads — extra caution needed here.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="lbl">News driving these moves</div>
+      <div class="lo" style="font-size:12px;color:#888780;margin-bottom:8px;line-height:1.4">Headlines the bot found driving today's stocks. Positive news = green dot on movers table.</div>
+      <div style="padding:8px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#B4B2A9;font-family:'DM Mono',monospace;font-size:11px;margin-right:8px">→</span><span style="font-size:13px;color:#2C2C2A">SoundHound AI, Inc Class A Rockets on Bullish Bets</span></div><div style="padding:8px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#B4B2A9;font-family:'DM Mono',monospace;font-size:11px;margin-right:8px">→</span><span style="font-size:13px;color:#2C2C2A">Vanguard holds 20.35M SoundHound shares (NASDAQ: SOUN) in 13G filing</span></div><div style="padding:8px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#B4B2A9;font-family:'DM Mono',monospace;font-size:11px;margin-right:8px">→</span><span style="font-size:13px;color:#2C2C2A">Vanguard lists 6.62% stake in SoundHound AI (NASDAQ: SOUN)</span></div><div style="padding:8px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#B4B2A9;font-family:'DM Mono',monospace;font-size:11px;margin-right:8px">→</span><span style="font-size:13px;color:#2C2C2A">BigBear.ai Before Q1 Earnings: Buy, Sell or Hold the Stock?</span></div><div style="padding:8px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#B4B2A9;font-family:'DM Mono',monospace;font-size:11px;margin-right:8px">→</span><span style="font-size:13px;color:#2C2C2A">BigBear.ai (BBAI) Stock Surges 10 Percent on Heavy Volume as May 5 Earnings Create Defense AI Positioning Moment</span></div><div style="padding:8px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#B4B2A9;font-family:'DM Mono',monospace;font-size:11px;margin-right:8px">→</span><span style="font-size:13px;color:#2C2C2A">BigBear.ai (BBAI) Is Up 8.7% After Doubling Authorized Shares Is Its Equity Strategy Evolving?</span></div>
+    </div>
+
+    <div class="disclaimer">
+      <p><strong>Signals only — you click to trade in moomoo.</strong> Always set a stop-loss. Never risk more than you can afford to lose. Not financial advice.</p>
+    </div>
+
+  </div>
+  <div class="right-col">
+
+    <div class="card" style="overflow-x:auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div class="lbl" style="margin:0">Top 10 movers — $0.01 to $25</div>
+        <div style="font-size:11px;color:#888780;font-family:'DM Mono',monospace">61 scanned</div>
+      </div>
+      <table>
+        <tr><th>#</th><th>Ticker</th><th>Price</th><th>Change</th><th>Volume</th><th style="width:50px">Move</th><th style="text-align:center">Signal</th><th style="text-align:center">News</th><th class="lo">Plain English</th></tr>
+        <tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:9px 6px;color:#C4C2BA;font-size:11px;font-family:'DM Mono',monospace;text-align:center">1</td>
+  <td style="padding:9px 6px"><div style="font-weight:700;font-size:14px">SENS</div><div class="lo" style="font-size:10px;color:#888780;margin-top:1px">$4.96–$5.39</div></td>
+  <td style="padding:9px 6px;font-family:'DM Mono',monospace;font-size:13px">$5.11</td>
+  <td style="padding:9px 6px;color:#A32D2D;font-weight:700;font-size:14px;font-family:'DM Mono',monospace">-22.7%</td>
+  <td style="padding:9px 6px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">—</td>
+  <td style="padding:9px 6px;width:50px"><div style="height:5px;background:#EEECE8;border-radius:3px;overflow:hidden"><div style="height:100%;width:90%;background:#E24B4A;border-radius:3px"></div></div></td>
+  <td style="padding:9px 6px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;background:#FCEBEB;color:#791F1F;white-space:nowrap">short</span></td>
+  <td style="padding:9px 6px;text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral"></div></td>
+  <td class="lo" style="padding:9px 8px;font-size:11px;color:#5F5E5A;line-height:1.4;max-width:180px"><div>Strong downward move — advanced only</div><div style="color:#888780;margin-top:2px">No major news catalyst</div></td>
+</tr><tr style="background:rgba(234,243,222,0.45);border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:9px 6px;color:#C4C2BA;font-size:11px;font-family:'DM Mono',monospace;text-align:center">2</td>
+  <td style="padding:9px 6px"><div style="font-weight:700;font-size:14px">SOUN</div><div class="lo" style="font-size:10px;color:#888780;margin-top:1px">$8.06–$9.60</div></td>
+  <td style="padding:9px 6px;font-family:'DM Mono',monospace;font-size:13px">$9.57</td>
+  <td style="padding:9px 6px;color:#3B6D11;font-weight:700;font-size:14px;font-family:'DM Mono',monospace">+20.2%</td>
+  <td style="padding:9px 6px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">32.9M</td>
+  <td style="padding:9px 6px;width:50px"><div style="height:5px;background:#EEECE8;border-radius:3px;overflow:hidden"><div style="height:100%;width:80%;background:#97C459;border-radius:3px"></div></div></td>
+  <td style="padding:9px 6px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;background:#EAF3DE;color:#27500A;white-space:nowrap">breakout</span></td>
+  <td style="padding:9px 6px;text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:#3B6D11;margin:0 auto" title="bullish"></div></td>
+  <td class="lo" style="padding:9px 8px;font-size:11px;color:#5F5E5A;line-height:1.4;max-width:180px"><div>Price broke past a ceiling — strongest buy signal</div><div style="color:#888780;margin-top:2px">Positive news driving move</div><div style="color:#B4B2A9;margin-top:2px;font-style:italic">SoundHound AI, Inc Class A Rockets on Bullish Bets…</div></td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:9px 6px;color:#C4C2BA;font-size:11px;font-family:'DM Mono',monospace;text-align:center">3</td>
+  <td style="padding:9px 6px"><div style="font-weight:700;font-size:14px">AIXI</div><div class="lo" style="font-size:10px;color:#888780;margin-top:1px">$0.77–$0.87</div></td>
+  <td style="padding:9px 6px;font-family:'DM Mono',monospace;font-size:13px">$0.82</td>
+  <td style="padding:9px 6px;color:#A32D2D;font-weight:700;font-size:14px;font-family:'DM Mono',monospace">-16.2%</td>
+  <td style="padding:9px 6px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">35.4M</td>
+  <td style="padding:9px 6px;width:50px"><div style="height:5px;background:#EEECE8;border-radius:3px;overflow:hidden"><div style="height:100%;width:64%;background:#E24B4A;border-radius:3px"></div></div></td>
+  <td style="padding:9px 6px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;background:#FCEBEB;color:#791F1F;white-space:nowrap">short</span></td>
+  <td style="padding:9px 6px;text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:#A32D2D;margin:0 auto" title="bearish"></div></td>
+  <td class="lo" style="padding:9px 8px;font-size:11px;color:#5F5E5A;line-height:1.4;max-width:180px"><div>Strong downward move — advanced only</div><div style="color:#888780;margin-top:2px">Negative news — be careful</div><div style="color:#B4B2A9;margin-top:2px;font-style:italic">Xiao-I Corp. Secures $3.25 Million Convertible Note Fin…</div></td>
+</tr><tr style="background:rgba(234,243,222,0.45);border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:9px 6px;color:#C4C2BA;font-size:11px;font-family:'DM Mono',monospace;text-align:center">4</td>
+  <td style="padding:9px 6px"><div style="font-weight:700;font-size:14px">WKHS</div><div class="lo" style="font-size:10px;color:#888780;margin-top:1px">$2.89–$3.43</div></td>
+  <td style="padding:9px 6px;font-family:'DM Mono',monospace;font-size:13px">$3.26</td>
+  <td style="padding:9px 6px;color:#3B6D11;font-weight:700;font-size:14px;font-family:'DM Mono',monospace">+12.4%</td>
+  <td style="padding:9px 6px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">324K</td>
+  <td style="padding:9px 6px;width:50px"><div style="height:5px;background:#EEECE8;border-radius:3px;overflow:hidden"><div style="height:100%;width:49%;background:#97C459;border-radius:3px"></div></div></td>
+  <td style="padding:9px 6px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;background:#EAF3DE;color:#27500A;white-space:nowrap">breakout</span></td>
+  <td style="padding:9px 6px;text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral"></div></td>
+  <td class="lo" style="padding:9px 8px;font-size:11px;color:#5F5E5A;line-height:1.4;max-width:180px"><div>Price broke past a ceiling — strongest buy signal</div><div style="color:#888780;margin-top:2px">No major news catalyst</div></td>
+</tr><tr style="background:rgba(234,243,222,0.45);border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:9px 6px;color:#C4C2BA;font-size:11px;font-family:'DM Mono',monospace;text-align:center">5</td>
+  <td style="padding:9px 6px"><div style="font-weight:700;font-size:14px">BBBY</div><div class="lo" style="font-size:10px;color:#888780;margin-top:1px">$4.96–$5.58</div></td>
+  <td style="padding:9px 6px;font-family:'DM Mono',monospace;font-size:13px">$5.45</td>
+  <td style="padding:9px 6px;color:#3B6D11;font-weight:700;font-size:14px;font-family:'DM Mono',monospace">+11.2%</td>
+  <td style="padding:9px 6px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">—</td>
+  <td style="padding:9px 6px;width:50px"><div style="height:5px;background:#EEECE8;border-radius:3px;overflow:hidden"><div style="height:100%;width:44%;background:#97C459;border-radius:3px"></div></div></td>
+  <td style="padding:9px 6px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;background:#EAF3DE;color:#27500A;white-space:nowrap">breakout</span></td>
+  <td style="padding:9px 6px;text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral"></div></td>
+  <td class="lo" style="padding:9px 8px;font-size:11px;color:#5F5E5A;line-height:1.4;max-width:180px"><div>Price broke past a ceiling — strongest buy signal</div><div style="color:#888780;margin-top:2px">No major news catalyst</div></td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:9px 6px;color:#C4C2BA;font-size:11px;font-family:'DM Mono',monospace;text-align:center">6</td>
+  <td style="padding:9px 6px"><div style="font-weight:700;font-size:14px">RIVN</div><div class="lo" style="font-size:10px;color:#888780;margin-top:1px">$15.01–$16.02</div></td>
+  <td style="padding:9px 6px;font-family:'DM Mono',monospace;font-size:13px">$15.03</td>
+  <td style="padding:9px 6px;color:#A32D2D;font-weight:700;font-size:14px;font-family:'DM Mono',monospace">-8.3%</td>
+  <td style="padding:9px 6px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">25.4M</td>
+  <td style="padding:9px 6px;width:50px"><div style="height:5px;background:#EEECE8;border-radius:3px;overflow:hidden"><div style="height:100%;width:33%;background:#E24B4A;border-radius:3px"></div></div></td>
+  <td style="padding:9px 6px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;background:#FCEBEB;color:#791F1F;white-space:nowrap">avoid</span></td>
+  <td style="padding:9px 6px;text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral"></div></td>
+  <td class="lo" style="padding:9px 8px;font-size:11px;color:#5F5E5A;line-height:1.4;max-width:180px"><div>Falling with bad signals — leave it alone</div><div style="color:#888780;margin-top:2px">No major news catalyst</div></td>
+</tr><tr style="background:rgba(234,243,222,0.45);border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:9px 6px;color:#C4C2BA;font-size:11px;font-family:'DM Mono',monospace;text-align:center">7</td>
+  <td style="padding:9px 6px"><div style="font-weight:700;font-size:14px">ARBK</div><div class="lo" style="font-size:10px;color:#888780;margin-top:1px">$3.11–$3.37</div></td>
+  <td style="padding:9px 6px;font-family:'DM Mono',monospace;font-size:13px">$3.27</td>
+  <td style="padding:9px 6px;color:#3B6D11;font-weight:700;font-size:14px;font-family:'DM Mono',monospace">+7.6%</td>
+  <td style="padding:9px 6px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">969K</td>
+  <td style="padding:9px 6px;width:50px"><div style="height:5px;background:#EEECE8;border-radius:3px;overflow:hidden"><div style="height:100%;width:30%;background:#97C459;border-radius:3px"></div></div></td>
+  <td style="padding:9px 6px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;background:#EAF3DE;color:#27500A;white-space:nowrap">momentum</span></td>
+  <td style="padding:9px 6px;text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral"></div></td>
+  <td class="lo" style="padding:9px 8px;font-size:11px;color:#5F5E5A;line-height:1.4;max-width:180px"><div>Rising steadily with volume behind it</div><div style="color:#888780;margin-top:2px">No major news catalyst</div></td>
+</tr><tr style="background:rgba(234,243,222,0.45);border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:9px 6px;color:#C4C2BA;font-size:11px;font-family:'DM Mono',monospace;text-align:center">8</td>
+  <td style="padding:9px 6px"><div style="font-weight:700;font-size:14px">RIOT</div><div class="lo" style="font-size:10px;color:#888780;margin-top:1px">$18.17–$19.50</div></td>
+  <td style="padding:9px 6px;font-family:'DM Mono',monospace;font-size:13px">$18.51</td>
+  <td style="padding:9px 6px;color:#3B6D11;font-weight:700;font-size:14px;font-family:'DM Mono',monospace">+7.4%</td>
+  <td style="padding:9px 6px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">20.0M</td>
+  <td style="padding:9px 6px;width:50px"><div style="height:5px;background:#EEECE8;border-radius:3px;overflow:hidden"><div style="height:100%;width:29%;background:#97C459;border-radius:3px"></div></div></td>
+  <td style="padding:9px 6px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;background:#EAF3DE;color:#27500A;white-space:nowrap">momentum</span></td>
+  <td style="padding:9px 6px;text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral"></div></td>
+  <td class="lo" style="padding:9px 8px;font-size:11px;color:#5F5E5A;line-height:1.4;max-width:180px"><div>Rising steadily with volume behind it</div><div style="color:#888780;margin-top:2px">No major news catalyst</div></td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:9px 6px;color:#C4C2BA;font-size:11px;font-family:'DM Mono',monospace;text-align:center">9</td>
+  <td style="padding:9px 6px"><div style="font-weight:700;font-size:14px">NIO</div><div class="lo" style="font-size:10px;color:#888780;margin-top:1px">$5.81–$6.23</div></td>
+  <td style="padding:9px 6px;font-family:'DM Mono',monospace;font-size:13px">$5.92</td>
+  <td style="padding:9px 6px;color:#A32D2D;font-weight:700;font-size:14px;font-family:'DM Mono',monospace">-7.4%</td>
+  <td style="padding:9px 6px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">30.2M</td>
+  <td style="padding:9px 6px;width:50px"><div style="height:5px;background:#EEECE8;border-radius:3px;overflow:hidden"><div style="height:100%;width:29%;background:#E24B4A;border-radius:3px"></div></div></td>
+  <td style="padding:9px 6px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;background:#FCEBEB;color:#791F1F;white-space:nowrap">avoid</span></td>
+  <td style="padding:9px 6px;text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral"></div></td>
+  <td class="lo" style="padding:9px 8px;font-size:11px;color:#5F5E5A;line-height:1.4;max-width:180px"><div>Falling with bad signals — leave it alone</div><div style="color:#888780;margin-top:2px">No major news catalyst</div></td>
+</tr><tr style="background:rgba(234,243,222,0.45);border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:9px 6px;color:#C4C2BA;font-size:11px;font-family:'DM Mono',monospace;text-align:center">10</td>
+  <td style="padding:9px 6px"><div style="font-weight:700;font-size:14px">AEYE</div><div class="lo" style="font-size:10px;color:#888780;margin-top:1px">$7.16–$7.79</div></td>
+  <td style="padding:9px 6px;font-family:'DM Mono',monospace;font-size:13px">$7.65</td>
+  <td style="padding:9px 6px;color:#3B6D11;font-weight:700;font-size:14px;font-family:'DM Mono',monospace">+6.8%</td>
+  <td style="padding:9px 6px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">113K</td>
+  <td style="padding:9px 6px;width:50px"><div style="height:5px;background:#EEECE8;border-radius:3px;overflow:hidden"><div style="height:100%;width:27%;background:#97C459;border-radius:3px"></div></div></td>
+  <td style="padding:9px 6px;text-align:center"><span style="font-size:11px;padding:3px 8px;border-radius:5px;font-weight:700;background:#EAF3DE;color:#27500A;white-space:nowrap">breakout</span></td>
+  <td style="padding:9px 6px;text-align:center"><div style="width:10px;height:10px;border-radius:50%;background:#3B6D11;margin:0 auto" title="bullish"></div></td>
+  <td class="lo" style="padding:9px 8px;font-size:11px;color:#5F5E5A;line-height:1.4;max-width:180px"><div>Price broke past a ceiling — strongest buy signal</div><div style="color:#888780;margin-top:2px">Positive news driving move</div><div style="color:#B4B2A9;margin-top:2px;font-style:italic">Audioeye, Inc. (NASDAQ:AEYE) Sees Significant Growth in…</div></td>
+</tr>
+      </table>
+      <div class="legend">
+        <span style="background:#EAF3DE;color:#27500A">breakout = broke past ceiling</span>
+        <span style="background:#EAF3DE;color:#27500A">momentum = rising with volume</span>
+        <span style="background:#FAEEDA;color:#633806">watch = not confirmed</span>
+        <span style="background:#FCEBEB;color:#791F1F">avoid/short = falling</span>
+      </div>
+      <div class="lo" style="margin-top:7px;font-size:11px;color:#B4B2A9;font-family:'DM Mono',monospace">Volume = shares traded today (M=millions, K=thousands) · Move bar = size of price movement · News dot: green=positive, grey=neutral, red=negative</div>
+    </div>
+
+    <div class="ai-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="width:14px;height:14px;border-radius:50%;background:#2C2C2A;display:flex;align-items:center;justify-content:center"><div style="width:5px;height:5px;border-radius:50%;background:white"></div></div>
+        <div class="lbl" style="margin:0">AI day trading briefing</div>
+      </div>
+      <div class="lo" style="font-size:12px;color:#888780;margin-bottom:10px;padding:8px 10px;background:#F7F5EF;border-radius:8px;line-height:1.4">Claude AI reads the live movers, signals, volume and news then writes a plain-English summary of what's happening and what to watch. Refreshes every 5 minutes.</div>
+      <div style="font-size:14px;line-height:1.8;color:#2C2C2A;font-weight:300"># Morning Briefing
+
+Look, we're in a red market today, which means overall sentiment [the mood of investors] is negative and most stocks are dropping—this is a tough environment to make money in, so be extra cautious with your position sizing [how much money you risk per trade]. The two stocks worth watching right now are **SOUN at $9.57** (up 20.2% on a breakout signal [when price breaks through a resistance level] with massive bullish news about Vanguard's large stake) and **WKHS at $3.26** (up 12.4% on a clean breakout with neutral news, though volume is thin at 324K). SOUN is the more interesting play because institutional money [big investors like Vanguard] moving in usually signals real conviction, and that 32.9M volume proves retail traders are piling in too. Here's the real risk though: in a red market day, any of these breakouts can reverse hard, so watch your stop losses [automatic sell orders that limit your losses] tight—don't get greedy chasing SOUN's momentum. My tip for you: if you're going to trade today, stick to SOUN or WKHS only and take profits at 5-7% instead of waiting for the moon—red days reward quick traders, not bag holders [people holding losing positions].</div>
+    </div>
+
+    <div class="card lo">
+      <div class="lbl">Quick jargon guide</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">Bullish</div><div style="font-size:11px;color:#888780;line-height:1.4">Expecting price to go UP.</div></div>
+        <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">Bearish</div><div style="font-size:11px;color:#888780;line-height:1.4">Expecting price to go DOWN.</div></div>
+        <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">Volume</div><div style="font-size:11px;color:#888780;line-height:1.4">Shares traded. High = move is real.</div></div>
+        <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">Breakout</div><div style="font-size:11px;color:#888780;line-height:1.4">Price broke past a price ceiling.</div></div>
+        <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">Stop-loss</div><div style="font-size:11px;color:#888780;line-height:1.4">Auto-sell if price hits your limit.</div></div>
+        <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">RSI</div><div style="font-size:11px;color:#888780;line-height:1.4">Below 35 = oversold (buy?). Above 65 = overbought (wait).</div></div>
+        <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">Spread</div><div style="font-size:11px;color:#888780;line-height:1.4">Gap between buy and sell price. Smaller is better.</div></div>
+        <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">Momentum</div><div style="font-size:11px;color:#888780;line-height:1.4">Force behind a move. Strong = likely to continue.</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- ══════════ LONG-TERM PAGE ══════════ -->
+<div class="page" id="page-lt">
+
+  <div style="background:#1E1E1C;border-radius:16px;padding:20px;margin-bottom:20px;color:white">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:#A8A5A0;text-transform:uppercase;margin-bottom:6px">Long-term portfolio tracker</div>
+        <div style="font-size:22px;font-weight:700;color:white">10 stocks · analyst recommended</div>
+        <div style="font-size:13px;color:#888780;margin-top:4px">SPY · RKLB · NVDA · AMZN · MSFT · GOOGL · V · AAPL · AVGO · JPM</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:12px;color:#888780;font-family:'DM Mono',monospace">Picks from:</div>
+        <div style="font-size:12px;color:#C8C5BF;margin-top:3px;line-height:1.6">Morgan Stanley · Bank of America<br>Goldman Sachs · RBC Capital · CFRA<br>Berkshire Hathaway</div>
+      </div>
+    </div>
+    <div class="lo" style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.06);border-radius:8px;font-size:12px;color:#A8A5A0;line-height:1.5">
+      This page tracks long-term investment opportunities — stocks you hold for months or years, not minutes. The signals here (RSI, news sentiment, price action) tell you whether now is a good time to buy in or whether to be patient and wait for a better price. These are not day trading signals.
     </div>
   </div>
-  <div style="display:flex;gap:5px;margin-top:10px"><div style="display:flex;align-items:center;gap:7px;padding:6px 9px;background:#F7F5EF;border-radius:8px;flex:1;min-width:0"><div style="width:9px;height:9px;border-radius:50%;background:#97C459;flex-shrink:0"></div><div><div style="font-size:11px;font-weight:600;color:#2C2C2A">Volatility</div><div style="font-size:10px;color:#888780;margin-top:1px">60% stocks up</div></div></div><div style="display:flex;align-items:center;gap:7px;padding:6px 9px;background:#F7F5EF;border-radius:8px;flex:1;min-width:0"><div style="width:9px;height:9px;border-radius:50%;background:#97C459;flex-shrink:0"></div><div><div style="font-size:11px;font-weight:600;color:#2C2C2A">Momentum</div><div style="font-size:10px;color:#888780;margin-top:1px">Upward</div></div></div><div style="display:flex;align-items:center;gap:7px;padding:6px 9px;background:#F7F5EF;border-radius:8px;flex:1;min-width:0"><div style="width:9px;height:9px;border-radius:50%;background:#97C459;flex-shrink:0"></div><div><div style="font-size:11px;font-weight:600;color:#2C2C2A">Volume</div><div style="font-size:10px;color:#888780;margin-top:1px">Active</div></div></div><div style="display:flex;align-items:center;gap:7px;padding:6px 9px;background:#F7F5EF;border-radius:8px;flex:1;min-width:0"><div style="width:9px;height:9px;border-radius:50%;background:#EF9F27;flex-shrink:0"></div><div><div style="font-size:11px;font-weight:600;color:#2C2C2A">News</div><div style="font-size:10px;color:#888780;margin-top:1px">Neutral</div></div></div></div>
-</div>
 
-<div class="card">
-  <div class="lbl">Top 10 movers — $0.01 to $25</div>
-  <table>
-    <tr>
-      <th>#</th><th>Ticker</th><th>Price</th><th>Change</th>
-      <th style="width:40px;text-align:center">Move</th>
-      <th style="text-align:center">Signal</th>
-      <th style="text-align:center">News</th>
-    </tr>
-    <tr style="background:rgba(234,243,222,0.45);border-bottom:0.5px solid #F1EFE8"><td style="padding:8px 4px;color:#C4C2BA;font-size:10px;font-family:'DM Mono',monospace;text-align:center;width:20px">1</td><td style="padding:8px 4px;font-weight:700;font-size:13px;letter-spacing:0.3px">SOUN</td><td style="padding:8px 4px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">$9.57</td><td style="padding:8px 4px;color:#3B6D11;font-weight:700;font-size:13px;font-family:'DM Mono',monospace">+20.2%</td><td style="padding:8px 4px;width:40px"><div style="height:4px;background:#EEECE8;border-radius:2px;overflow:hidden"><div style="height:100%;width:100%;background:#97C459;border-radius:2px"></div></div></td><td style="padding:8px 4px;text-align:center"><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:#EAF3DE;color:#27500A">breakout</span></td><td style="padding:8px 4px;text-align:center"><div style="width:9px;height:9px;border-radius:50%;background:#3B6D11;margin:0 auto" title="bullish news"></div></td></tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8"><td style="padding:8px 4px;color:#C4C2BA;font-size:10px;font-family:'DM Mono',monospace;text-align:center;width:20px">2</td><td style="padding:8px 4px;font-weight:700;font-size:13px;letter-spacing:0.3px">AIXI</td><td style="padding:8px 4px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">$0.82</td><td style="padding:8px 4px;color:#A32D2D;font-weight:700;font-size:13px;font-family:'DM Mono',monospace">-16.2%</td><td style="padding:8px 4px;width:40px"><div style="height:4px;background:#EEECE8;border-radius:2px;overflow:hidden"><div style="height:100%;width:81%;background:#E24B4A;border-radius:2px"></div></div></td><td style="padding:8px 4px;text-align:center"><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:#FCEBEB;color:#791F1F">short</span></td><td style="padding:8px 4px;text-align:center"><div style="width:9px;height:9px;border-radius:50%;background:#A32D2D;margin:0 auto" title="bearish news"></div></td></tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8"><td style="padding:8px 4px;color:#C4C2BA;font-size:10px;font-family:'DM Mono',monospace;text-align:center;width:20px">3</td><td style="padding:8px 4px;font-weight:700;font-size:13px;letter-spacing:0.3px">RIVN</td><td style="padding:8px 4px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">$15.03</td><td style="padding:8px 4px;color:#A32D2D;font-weight:700;font-size:13px;font-family:'DM Mono',monospace">-8.3%</td><td style="padding:8px 4px;width:40px"><div style="height:4px;background:#EEECE8;border-radius:2px;overflow:hidden"><div style="height:100%;width:41%;background:#E24B4A;border-radius:2px"></div></div></td><td style="padding:8px 4px;text-align:center"><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:#FCEBEB;color:#791F1F">avoid</span></td><td style="padding:8px 4px;text-align:center"><div style="width:9px;height:9px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral news"></div></td></tr><tr style="background:rgba(234,243,222,0.45);border-bottom:0.5px solid #F1EFE8"><td style="padding:8px 4px;color:#C4C2BA;font-size:10px;font-family:'DM Mono',monospace;text-align:center;width:20px">4</td><td style="padding:8px 4px;font-weight:700;font-size:13px;letter-spacing:0.3px">RIOT</td><td style="padding:8px 4px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">$18.51</td><td style="padding:8px 4px;color:#3B6D11;font-weight:700;font-size:13px;font-family:'DM Mono',monospace">+7.4%</td><td style="padding:8px 4px;width:40px"><div style="height:4px;background:#EEECE8;border-radius:2px;overflow:hidden"><div style="height:100%;width:36%;background:#97C459;border-radius:2px"></div></div></td><td style="padding:8px 4px;text-align:center"><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:#EAF3DE;color:#27500A">breakout</span></td><td style="padding:8px 4px;text-align:center"><div style="width:9px;height:9px;border-radius:50%;background:#3B6D11;margin:0 auto" title="bullish news"></div></td></tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8"><td style="padding:8px 4px;color:#C4C2BA;font-size:10px;font-family:'DM Mono',monospace;text-align:center;width:20px">5</td><td style="padding:8px 4px;font-weight:700;font-size:13px;letter-spacing:0.3px">BTBT</td><td style="padding:8px 4px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">$1.58</td><td style="padding:8px 4px;color:#3B6D11;font-weight:700;font-size:13px;font-family:'DM Mono',monospace">+4.6%</td><td style="padding:8px 4px;width:40px"><div style="height:4px;background:#EEECE8;border-radius:2px;overflow:hidden"><div style="height:100%;width:23%;background:#97C459;border-radius:2px"></div></div></td><td style="padding:8px 4px;text-align:center"><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:#FAEEDA;color:#633806">watch</span></td><td style="padding:8px 4px;text-align:center"><div style="width:9px;height:9px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral news"></div></td></tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8"><td style="padding:8px 4px;color:#C4C2BA;font-size:10px;font-family:'DM Mono',monospace;text-align:center;width:20px">6</td><td style="padding:8px 4px;font-weight:700;font-size:13px;letter-spacing:0.3px">MARA</td><td style="padding:8px 4px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">$11.47</td><td style="padding:8px 4px;color:#A32D2D;font-weight:700;font-size:13px;font-family:'DM Mono',monospace">-4.3%</td><td style="padding:8px 4px;width:40px"><div style="height:4px;background:#EEECE8;border-radius:2px;overflow:hidden"><div style="height:100%;width:21%;background:#E24B4A;border-radius:2px"></div></div></td><td style="padding:8px 4px;text-align:center"><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:#FCEBEB;color:#791F1F">avoid</span></td><td style="padding:8px 4px;text-align:center"><div style="width:9px;height:9px;border-radius:50%;background:#A32D2D;margin:0 auto" title="bearish news"></div></td></tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8"><td style="padding:8px 4px;color:#C4C2BA;font-size:10px;font-family:'DM Mono',monospace;text-align:center;width:20px">7</td><td style="padding:8px 4px;font-weight:700;font-size:13px;letter-spacing:0.3px">BBAI</td><td style="padding:8px 4px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">$4.15</td><td style="padding:8px 4px;color:#3B6D11;font-weight:700;font-size:13px;font-family:'DM Mono',monospace">+4.3%</td><td style="padding:8px 4px;width:40px"><div style="height:4px;background:#EEECE8;border-radius:2px;overflow:hidden"><div style="height:100%;width:21%;background:#97C459;border-radius:2px"></div></div></td><td style="padding:8px 4px;text-align:center"><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:#FAEEDA;color:#633806">watch</span></td><td style="padding:8px 4px;text-align:center"><div style="width:9px;height:9px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral news"></div></td></tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8"><td style="padding:8px 4px;color:#C4C2BA;font-size:10px;font-family:'DM Mono',monospace;text-align:center;width:20px">8</td><td style="padding:8px 4px;font-weight:700;font-size:13px;letter-spacing:0.3px">SAVA</td><td style="padding:8px 4px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">$1.51</td><td style="padding:8px 4px;color:#3B6D11;font-weight:700;font-size:13px;font-family:'DM Mono',monospace">+4.1%</td><td style="padding:8px 4px;width:40px"><div style="height:4px;background:#EEECE8;border-radius:2px;overflow:hidden"><div style="height:100%;width:20%;background:#97C459;border-radius:2px"></div></div></td><td style="padding:8px 4px;text-align:center"><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:#F1EFE8;color:#444441">flat</span></td><td style="padding:8px 4px;text-align:center"><div style="width:9px;height:9px;border-radius:50%;background:#A32D2D;margin:0 auto" title="bearish news"></div></td></tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8"><td style="padding:8px 4px;color:#C4C2BA;font-size:10px;font-family:'DM Mono',monospace;text-align:center;width:20px">9</td><td style="padding:8px 4px;font-weight:700;font-size:13px;letter-spacing:0.3px">AMC</td><td style="padding:8px 4px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">$1.46</td><td style="padding:8px 4px;color:#A32D2D;font-weight:700;font-size:13px;font-family:'DM Mono',monospace">-4.0%</td><td style="padding:8px 4px;width:40px"><div style="height:4px;background:#EEECE8;border-radius:2px;overflow:hidden"><div style="height:100%;width:19%;background:#E24B4A;border-radius:2px"></div></div></td><td style="padding:8px 4px;text-align:center"><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:#FAEEDA;color:#633806">fading</span></td><td style="padding:8px 4px;text-align:center"><div style="width:9px;height:9px;border-radius:50%;background:#B4B2A9;margin:0 auto" title="neutral news"></div></td></tr><tr style="background:rgba(234,243,222,0.45);border-bottom:0.5px solid #F1EFE8"><td style="padding:8px 4px;color:#C4C2BA;font-size:10px;font-family:'DM Mono',monospace;text-align:center;width:20px">10</td><td style="padding:8px 4px;font-weight:700;font-size:13px;letter-spacing:0.3px">OCGN</td><td style="padding:8px 4px;font-size:12px;font-family:'DM Mono',monospace;color:#5F5E5A">$1.79</td><td style="padding:8px 4px;color:#3B6D11;font-weight:700;font-size:13px;font-family:'DM Mono',monospace">+3.5%</td><td style="padding:8px 4px;width:40px"><div style="height:4px;background:#EEECE8;border-radius:2px;overflow:hidden"><div style="height:100%;width:17%;background:#97C459;border-radius:2px"></div></div></td><td style="padding:8px 4px;text-align:center"><span style="font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:#EAF3DE;color:#27500A">momentum</span></td><td style="padding:8px 4px;text-align:center"><div style="width:9px;height:9px;border-radius:50%;background:#3B6D11;margin:0 auto" title="bullish news"></div></td></tr>
-  </table>
-  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:10px">
-    <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:#EAF3DE;color:#27500A;font-weight:700">breakout/momentum = look first</span>
-    <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:#FAEEDA;color:#633806;font-weight:700">watch = not confirmed</span>
-    <span style="font-size:10px;padding:2px 7px;border-radius:4px;background:#FCEBEB;color:#791F1F;font-weight:700">avoid/short = falling</span>
-  </div>
-  <div style="margin-top:6px;font-size:10px;color:#C4C2BA;font-family:'DM Mono',monospace">
-    News dot: green=positive · grey=neutral · red=negative
-  </div>
-</div>
+  <div class="desk-grid">
+    <div class="left-col">
 
-<div class="card" style="border-left:3px solid #2C2C2A;border-radius:0 16px 16px 0">
-  <div class="lbl" style="display:flex;align-items:center;gap:6px">
-    <div style="width:14px;height:14px;border-radius:50%;background:#2C2C2A;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-      <div style="width:5px;height:5px;border-radius:50%;background:white"></div>
+      <div class="ai-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div style="width:14px;height:14px;border-radius:50%;background:#2C2C2A;display:flex;align-items:center;justify-content:center"><div style="width:5px;height:5px;border-radius:50%;background:white"></div></div>
+          <div class="lbl" style="margin:0">AI long-term analyst briefing</div>
+        </div>
+        <div class="lo" style="font-size:12px;color:#888780;margin-bottom:10px;padding:8px 10px;background:#F7F5EF;border-radius:8px;line-height:1.4">Claude AI looks at your 10 long-term stocks and tells you which look like good entry points today versus which to be patient with. Based on RSI, news and price action.</div>
+        <div style="font-size:14px;line-height:1.8;color:#2C2C2A;font-weight:300"># Long-Term Investment Outlook
+
+The market looks calm right now with most of your watchlist holding steady—nothing's dramatically overheated or crashed, which is actually ideal for a beginner building positions over time. RKLB's 4.5% dip stands out as the sharpest move on your list, and while the company operates in the competitive space launch sector, this kind of pullback can sometimes create an opportunity if you believe in their long-term vision; it's worth researching whether the decline reflects real company problems or just normal market noise. AAPL's modest 3.2% gain suggests steady strength in a quality business, so that could be another reasonable entry point if you're looking to add to a core holding, especially since Apple tends to be a reliable compounder [a company that grows profits steadily year after year].
+
+I'd suggest being patient with NVDA for now—it's a phenomenal company, but it's also priced for perfection given all the AI excitement, so waiting for a more meaningful pullback might give you better value. Similarly, GOOGL and V are solid businesses, but they're not screaming "buy me today," so there's no rush.
+
+Remember this: as a long-term investor, you're not trying to catch every dip or time the market perfectly—you're trying to own good businesses at reasonable prices and let them work for you over years and decades. The small daily moves you're seeing today won't matter much in ten years.
+
+These signals should guide your research, not replace it—always do your own homework before committing real money.</div>
+      </div>
+
+      <div class="card">
+        <div class="lbl">Long-term news</div>
+        <div class="lo" style="font-size:12px;color:#888780;margin-bottom:8px;line-height:1.4">Major headlines affecting your long-term portfolio stocks today.</div>
+        <div style="font-size:13px;color:#B4B2A9;padding:8px 0">No headlines this cycle</div>
+      </div>
+
+      <div class="card lo">
+        <div class="lbl">Long-term investing explained</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">RSI below 35</div><div style="font-size:11px;color:#888780;line-height:1.4">Stock has dropped enough it might bounce back. Like a ball pushed down — potential buy opportunity.</div></div>
+          <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">Dip buy</div><div style="font-size:11px;color:#888780;line-height:1.4">Buying after a price drop, expecting recovery. Like buying good shoes on sale.</div></div>
+          <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">Dollar cost averaging</div><div style="font-size:11px;color:#888780;line-height:1.4">Buying a fixed amount regularly instead of all at once. Reduces risk of buying at the wrong moment.</div></div>
+          <div style="padding:8px 10px;background:#F7F5EF;border-radius:8px"><div style="font-size:12px;font-weight:600;color:#2C2C2A;margin-bottom:2px">Dividend</div><div style="font-size:11px;color:#888780;line-height:1.4">A cash payment companies make to shareholders. Like interest on your investment while you hold.</div></div>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <p><strong>Not financial advice.</strong> These signals are for research purposes only. Always do your own research before investing long-term. Past performance does not guarantee future results.</p>
+      </div>
+
     </div>
-    AI analyst briefing
+    <div class="right-col">
+
+      <div class="card" style="overflow-x:auto">
+        <div class="lbl">Portfolio watchlist — entry signals</div>
+        <div class="lo" style="font-size:12px;color:#888780;margin-bottom:10px;line-height:1.4">
+          Each row shows whether today is a good time to buy into that stock.
+          <strong style="color:#2C2C2A">RSI</strong> below 35 = possible buy opportunity (oversold).
+          Check marks show which conditions are met before buying.
+        </div>
+        <table>
+          <tr>
+            <th>Stock</th>
+            <th>Price</th>
+            <th style="text-align:center">RSI</th>
+            <th style="text-align:center">Signal</th>
+            <th class="lo">Why it's on the list + entry checklist</th>
+          </tr>
+          <tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:700;font-size:14px">SPY</div>
+    <div style="font-size:12px;color:#5F5E5A;margin-top:1px">S&P 500 ETF</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:1px">ETF</div>
+  </td>
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:600;font-size:14px;font-family:'DM Mono',monospace">$720.67</div>
+    <div style="font-size:12px;color:#3B6D11;font-family:'DM Mono',monospace">+0.3% today</div>
+    <div style="font-size:11px;color:#888780;margin-top:1px">$720.47–$724.87</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:#5F5E5A">—</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:2px">RSI</div>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:3px;line-height:1.3">Healthy range</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <span style="font-size:11px;padding:4px 10px;border-radius:5px;font-weight:700;background:#F1EFE8;color:#444441;white-space:nowrap">hold</span>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:6px">All major banks</div>
+  </td>
+  <td class="lo" style="padding:10px 8px;vertical-align:top;max-width:220px">
+    <div style="font-size:11px;color:#5F5E5A;line-height:1.5;margin-bottom:6px">Tracks 500 biggest US companies. Safest long-term investment — when America grows, this grows.</div>
+    <div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>RSI — not available this cycle</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#3B6D11;flex-shrink:0">✓</span><span>+0.3% today — stable, no extreme move to avoid</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>News — API limit reached, using cached data</span></div>
+  </td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:700;font-size:14px">RKLB</div>
+    <div style="font-size:12px;color:#5F5E5A;margin-top:1px">Rocket Lab</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:1px">Space</div>
+  </td>
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:600;font-size:14px;font-family:'DM Mono',monospace">$78.83</div>
+    <div style="font-size:12px;color:#A32D2D;font-family:'DM Mono',monospace">-4.5% today</div>
+    <div style="font-size:11px;color:#888780;margin-top:1px">$78.43–$83.79</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:#5F5E5A">—</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:2px">RSI</div>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:3px;line-height:1.3">Healthy range</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <span style="font-size:11px;padding:4px 10px;border-radius:5px;font-weight:700;background:#F1EFE8;color:#444441;white-space:nowrap">hold</span>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:6px">Your pick</div>
+  </td>
+  <td class="lo" style="padding:10px 8px;vertical-align:top;max-width:220px">
+    <div style="font-size:11px;color:#5F5E5A;line-height:1.5;margin-bottom:6px">Small satellite launch leader. High risk, high reward — betting on the future of commercial space.</div>
+    <div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>RSI — not available this cycle</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#3B6D11;flex-shrink:0">✓</span><span>-4.5% today — stable, no extreme move to avoid</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>News — API limit reached, using cached data</span></div>
+  </td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:700;font-size:14px">NVDA</div>
+    <div style="font-size:12px;color:#5F5E5A;margin-top:1px">Nvidia</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:1px">AI/Tech</div>
+  </td>
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:600;font-size:14px;font-family:'DM Mono',monospace">$198.47</div>
+    <div style="font-size:12px;color:#A32D2D;font-family:'DM Mono',monospace">-0.6% today</div>
+    <div style="font-size:11px;color:#888780;margin-top:1px">$197.12–$203.00</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:#5F5E5A">—</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:2px">RSI</div>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:3px;line-height:1.3">Healthy range</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <span style="font-size:11px;padding:4px 10px;border-radius:5px;font-weight:700;background:#F1EFE8;color:#444441;white-space:nowrap">hold</span>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:6px">Morgan Stanley, BofA</div>
+  </td>
+  <td class="lo" style="padding:10px 8px;vertical-align:top;max-width:220px">
+    <div style="font-size:11px;color:#5F5E5A;line-height:1.5;margin-bottom:6px">World's leading AI chip maker. Both Morgan Stanley and Bank of America rate it a top pick for 2026.</div>
+    <div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>RSI — not available this cycle</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#3B6D11;flex-shrink:0">✓</span><span>-0.6% today — stable, no extreme move to avoid</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>News — API limit reached, using cached data</span></div>
+  </td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:700;font-size:14px">AMZN</div>
+    <div style="font-size:12px;color:#5F5E5A;margin-top:1px">Amazon</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:1px">Tech</div>
+  </td>
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:600;font-size:14px;font-family:'DM Mono',monospace">$268.28</div>
+    <div style="font-size:12px;color:#3B6D11;font-family:'DM Mono',monospace">+1.2% today</div>
+    <div style="font-size:11px;color:#888780;margin-top:1px">$262.74–$273.31</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:#5F5E5A">—</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:2px">RSI</div>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:3px;line-height:1.3">Healthy range</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <span style="font-size:11px;padding:4px 10px;border-radius:5px;font-weight:700;background:#F1EFE8;color:#444441;white-space:nowrap">hold</span>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:6px">Morgan Stanley</div>
+  </td>
+  <td class="lo" style="padding:10px 8px;vertical-align:top;max-width:220px">
+    <div style="font-size:11px;color:#5F5E5A;line-height:1.5;margin-bottom:6px">Cloud computing, retail, and AI. Morgan Stanley's top mega-cap pick — massive recurring revenue.</div>
+    <div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>RSI — not available this cycle</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#3B6D11;flex-shrink:0">✓</span><span>+1.2% today — stable, no extreme move to avoid</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>News — API limit reached, using cached data</span></div>
+  </td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:700;font-size:14px">MSFT</div>
+    <div style="font-size:12px;color:#5F5E5A;margin-top:1px">Microsoft</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:1px">Tech</div>
+  </td>
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:600;font-size:14px;font-family:'DM Mono',monospace">$414.46</div>
+    <div style="font-size:12px;color:#3B6D11;font-family:'DM Mono',monospace">+1.6% today</div>
+    <div style="font-size:11px;color:#888780;margin-top:1px">$410.44–$417.11</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:#5F5E5A">—</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:2px">RSI</div>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:3px;line-height:1.3">Healthy range</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <span style="font-size:11px;padding:4px 10px;border-radius:5px;font-weight:700;background:#F1EFE8;color:#444441;white-space:nowrap">hold</span>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:6px">RBC Capital</div>
+  </td>
+  <td class="lo" style="padding:10px 8px;vertical-align:top;max-width:220px">
+    <div style="font-size:11px;color:#5F5E5A;line-height:1.5;margin-bottom:6px">AI across Office, Azure cloud, and Copilot. RBC top pick — steady long-term compounder.</div>
+    <div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>RSI — not available this cycle</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#3B6D11;flex-shrink:0">✓</span><span>+1.6% today — stable, no extreme move to avoid</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>News — API limit reached, using cached data</span></div>
+  </td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:700;font-size:14px">GOOGL</div>
+    <div style="font-size:12px;color:#5F5E5A;margin-top:1px">Alphabet</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:1px">Tech</div>
+  </td>
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:600;font-size:14px;font-family:'DM Mono',monospace">$385.71</div>
+    <div style="font-size:12px;color:#3B6D11;font-family:'DM Mono',monospace">+0.2% today</div>
+    <div style="font-size:11px;color:#888780;margin-top:1px">$379.05–$386.76</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:#5F5E5A">—</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:2px">RSI</div>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:3px;line-height:1.3">Healthy range</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <span style="font-size:11px;padding:4px 10px;border-radius:5px;font-weight:700;background:#F1EFE8;color:#444441;white-space:nowrap">hold</span>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:6px">Bank of America</div>
+  </td>
+  <td class="lo" style="padding:10px 8px;vertical-align:top;max-width:220px">
+    <div style="font-size:11px;color:#5F5E5A;line-height:1.5;margin-bottom:6px">Google search, YouTube, Google Cloud. Bank of America top pick — dominant market position.</div>
+    <div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>RSI — not available this cycle</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#3B6D11;flex-shrink:0">✓</span><span>+0.2% today — stable, no extreme move to avoid</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>News — API limit reached, using cached data</span></div>
+  </td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:700;font-size:14px">V</div>
+    <div style="font-size:12px;color:#5F5E5A;margin-top:1px">Visa</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:1px">Finance</div>
+  </td>
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:600;font-size:14px;font-family:'DM Mono',monospace">$328.05</div>
+    <div style="font-size:12px;color:#A32D2D;font-family:'DM Mono',monospace">-0.5% today</div>
+    <div style="font-size:11px;color:#888780;margin-top:1px">$327.93–$335.85</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:#5F5E5A">—</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:2px">RSI</div>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:3px;line-height:1.3">Healthy range</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <span style="font-size:11px;padding:4px 10px;border-radius:5px;font-weight:700;background:#F1EFE8;color:#444441;white-space:nowrap">hold</span>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:6px">Goldman Sachs</div>
+  </td>
+  <td class="lo" style="padding:10px 8px;vertical-align:top;max-width:220px">
+    <div style="font-size:11px;color:#5F5E5A;line-height:1.5;margin-bottom:6px">Goldman called it a long-term winner — every digital payment worldwide strengthens their network.</div>
+    <div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>RSI — not available this cycle</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#3B6D11;flex-shrink:0">✓</span><span>-0.5% today — stable, no extreme move to avoid</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>News — API limit reached, using cached data</span></div>
+  </td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:700;font-size:14px">AAPL</div>
+    <div style="font-size:12px;color:#5F5E5A;margin-top:1px">Apple</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:1px">Tech</div>
+  </td>
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:600;font-size:14px;font-family:'DM Mono',monospace">$280.16</div>
+    <div style="font-size:12px;color:#3B6D11;font-family:'DM Mono',monospace">+3.2% today</div>
+    <div style="font-size:11px;color:#888780;margin-top:1px">$278.37–$287.22</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:#5F5E5A">—</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:2px">RSI</div>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:3px;line-height:1.3">Healthy range</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <span style="font-size:11px;padding:4px 10px;border-radius:5px;font-weight:700;background:#F1EFE8;color:#444441;white-space:nowrap">hold</span>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:6px">Berkshire/Buffett</div>
+  </td>
+  <td class="lo" style="padding:10px 8px;vertical-align:top;max-width:220px">
+    <div style="font-size:11px;color:#5F5E5A;line-height:1.5;margin-bottom:6px">Warren Buffett's largest holding. Loyal customers, growing services revenue, consistent dividends.</div>
+    <div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>RSI — not available this cycle</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#3B6D11;flex-shrink:0">✓</span><span>+3.2% today — stable, no extreme move to avoid</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>News — API limit reached, using cached data</span></div>
+  </td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:700;font-size:14px">AVGO</div>
+    <div style="font-size:12px;color:#5F5E5A;margin-top:1px">Broadcom</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:1px">AI/Tech</div>
+  </td>
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:600;font-size:14px;font-family:'DM Mono',monospace">$421.30</div>
+    <div style="font-size:12px;color:#3B6D11;font-family:'DM Mono',monospace">+0.9% today</div>
+    <div style="font-size:11px;color:#888780;margin-top:1px">$413.28–$423.17</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:#5F5E5A">—</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:2px">RSI</div>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:3px;line-height:1.3">Healthy range</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <span style="font-size:11px;padding:4px 10px;border-radius:5px;font-weight:700;background:#F1EFE8;color:#444441;white-space:nowrap">hold</span>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:6px">Bank of America</div>
+  </td>
+  <td class="lo" style="padding:10px 8px;vertical-align:top;max-width:220px">
+    <div style="font-size:11px;color:#5F5E5A;line-height:1.5;margin-bottom:6px">AI chip infrastructure. Bank of America top pick — supplies the backbone of AI data centres.</div>
+    <div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>RSI — not available this cycle</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#3B6D11;flex-shrink:0">✓</span><span>+0.9% today — stable, no extreme move to avoid</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>News — API limit reached, using cached data</span></div>
+  </td>
+</tr><tr style="background:transparent;border-bottom:0.5px solid #F1EFE8">
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:700;font-size:14px">JPM</div>
+    <div style="font-size:12px;color:#5F5E5A;margin-top:1px">JPMorgan</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:1px">Finance</div>
+  </td>
+  <td style="padding:10px 8px;vertical-align:top">
+    <div style="font-weight:600;font-size:14px;font-family:'DM Mono',monospace">$312.49</div>
+    <div style="font-size:12px;color:#A32D2D;font-family:'DM Mono',monospace">-0.2% today</div>
+    <div style="font-size:11px;color:#888780;margin-top:1px">$311.83–$316.08</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:#5F5E5A">—</div>
+    <div style="font-size:10px;color:#B4B2A9;margin-top:2px">RSI</div>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:3px;line-height:1.3">Healthy range</div>
+  </td>
+  <td style="padding:10px 8px;text-align:center;vertical-align:top">
+    <span style="font-size:11px;padding:4px 10px;border-radius:5px;font-weight:700;background:#F1EFE8;color:#444441;white-space:nowrap">hold</span>
+    <div class="lo" style="font-size:10px;color:#888780;margin-top:6px">CFRA Buy</div>
+  </td>
+  <td class="lo" style="padding:10px 8px;vertical-align:top;max-width:220px">
+    <div style="font-size:11px;color:#5F5E5A;line-height:1.5;margin-bottom:6px">World's largest bank by assets. Benefits from strong US economy — CFRA buy rating with $340 target.</div>
+    <div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>RSI — not available this cycle</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#3B6D11;flex-shrink:0">✓</span><span>-0.2% today — stable, no extreme move to avoid</span></div><div style="display:flex;gap:5px;align-items:flex-start;padding:2px 0;font-size:11px;color:#5F5E5A"><span style="color:#B4B2A9;flex-shrink:0">–</span><span>News — API limit reached, using cached data</span></div>
+  </td>
+</tr>
+        </table>
+        <div class="legend" style="margin-top:10px">
+          <span style="background:#EAF3DE;color:#27500A">strong buy = multiple conditions met</span>
+          <span style="background:#E6F1FB;color:#0C447C">consider = looks interesting</span>
+          <span style="background:#F1EFE8;color:#444441">hold = no clear entry signal</span>
+          <span style="background:#FAEEDA;color:#633806">be patient / wait = not yet</span>
+        </div>
+      </div>
+
+    </div>
   </div>
-  <div style="font-size:13.5px;line-height:1.75;color:#2C2C2A;font-weight:300"># Session Briefing
-
-We're trading in amber conditions today, which means moderate caution is warranted—volatility is elevated and we should be selective rather than aggressive. SOUN is showing a classic breakout pattern with bullish news backing it up, making it worth watching if you're looking for momentum plays, but remember breakouts can reverse quickly. RIOT is also interesting because they just announced their first AI revenue, which is a genuine business catalyst that's pushing the stock up 7.4% on what appears to be real fundamentals rather than just hype. The main risk to watch is AIXI, where a massive equity dilution (8.5 million shares dumped on the market) is crushing the stock down 16%—this is a cautionary tale about why you need to check the news before chasing price movements. My actionable tip: if you do trade today, stick to stocks with clear catalysts like SOUN or RIOT rather than trying to catch knives like AIXI, and use tight stop-losses (pre-set exit points) because amber conditions mean things can turn fast.</div>
 </div>
 
-<div class="card">
-  <div class="lbl">News driving these moves</div>
-  <div style="font-size:12px;color:#5F5E5A;padding:7px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#C4C2BA;font-family:'DM Mono',monospace;font-size:10px;margin-right:6px">→</span>Xiao-I Corporation (NASDAQ: AIXI) sells $3.25M note and 8.5M shares</div><div style="font-size:12px;color:#5F5E5A;padding:7px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#C4C2BA;font-family:'DM Mono',monospace;font-size:10px;margin-right:6px">→</span>Xiao-I Corp. Secures $3.25 Million Convertible Note Financing From Institutional Investor</div><div style="font-size:12px;color:#5F5E5A;padding:7px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#C4C2BA;font-family:'DM Mono',monospace;font-size:10px;margin-right:6px">→</span>Riot Platforms: Generates First AI Revenue</div><div style="font-size:12px;color:#5F5E5A;padding:7px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#C4C2BA;font-family:'DM Mono',monospace;font-size:10px;margin-right:6px">→</span>Cassava Sciences (NASDAQ:SAVA) Stock Price Down 0.6% - Should You Sell?</div><div style="font-size:12px;color:#5F5E5A;padding:7px 0;border-bottom:0.5px solid #F1EFE8;line-height:1.5"><span style="color:#C4C2BA;font-family:'DM Mono',monospace;font-size:10px;margin-right:6px">→</span>BigBear.ai (BBAI) Stock Surges 10 Percent on Heavy Volume as May 5 Earnings Create Defense AI Positioning Moment</div>
 </div>
 
-<div style="margin:0 12px;padding:12px 14px;border-radius:12px;background:#FAEEDA;border:0.5px solid #FAC775">
-  <div style="font-size:12px;color:#854F0B;line-height:1.55">
-    <span style="font-weight:700">Signals only — you click to trade in moomoo.</span>
-    Always set a stop-loss. Never risk more than you can afford to lose.
-  </div>
+<div style="text-align:center;padding:8px 0 20px;font-family:'DM Mono',monospace;font-size:10px;color:#B4B2A9;letter-spacing:0.5px">
+  Last updated 12:57 AM · Auto-refreshes every 5 minutes · Signals only — you click to trade
 </div>
 
-<div style="text-align:center;padding:14px 0 0;font-family:'DM Mono',monospace;font-size:10px;color:#B4B2A9;letter-spacing:0.5px">
-  Last updated 12:47 AM · Next scan in 5 min
-</div>
-
+<script>
+function showPage(name,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.bot-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('page-'+name).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('session-tabs-wrap').style.display = name==='day' ? 'flex' : 'none';
+}
+function setMode(m){
+  document.body.classList.toggle('pro',m==='pro');
+  document.getElementById('btn-learn').classList.toggle('active',m==='learn');
+  document.getElementById('btn-pro').classList.toggle('active',m==='pro');
+}
+var SD=[
+  {label:'Pre-market',time:'4:00–9:30 PM AWST',bg:'#EEEDFE',color:'#3C3489',accent:'#534AB7'},
+  {label:'Regular hours',time:'9:30 PM–4:00 AM AWST',bg:'#E1F5EE',color:'#085041',accent:'#1D9E75'},
+  {label:'Post-market',time:'4:00–8:00 AM AWST',bg:'#FAEEDA',color:'#633806',accent:'#BA7517'}
+];
+function setSession(idx,el){
+  document.querySelectorAll('.s-tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  var s=SD[idx];
+  var pill=document.querySelector('.session-pill');
+  if(pill){
+    pill.style.background=s.bg;
+    pill.querySelector('span').textContent=s.label;
+    pill.querySelector('span').style.color=s.color;
+    pill.querySelector('.dot').style.background=s.accent;
+  }
+  var st=document.getElementById('pill-time');
+  if(st) st.textContent=s.time;
+  [0,1,2].forEach(function(i){
+    var el2=document.getElementById('si-'+i);
+    if(el2){el2.style.opacity=i===idx?'1':'0.5';}
+  });
+}
+setSession(1,document.querySelectorAll('.s-tab')[1]);
+</script>
 </body>
 </html>
